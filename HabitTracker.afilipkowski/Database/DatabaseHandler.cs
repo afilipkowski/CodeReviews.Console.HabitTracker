@@ -95,7 +95,7 @@ public class DatabaseHandler
             connection.Open();
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = 
+                command.CommandText =
                 $@"
                 UPDATE {tableName}
                 SET date = '{date}', amount = {amount}
@@ -113,9 +113,11 @@ public class DatabaseHandler
         using (var connection = new SqliteConnection(connectionString))
         {
             connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText = @$"SELECT COUNT(*) FROM {tableName} WHERE Id={id}";
-            result = Convert.ToInt32(command.ExecuteScalar());
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = @$"SELECT COUNT(*) FROM {tableName} WHERE Id={id}";
+                result = Convert.ToInt32(command.ExecuteScalar());
+            }
             connection.Close();
         }
         if (result == 1) return true;
